@@ -1,5 +1,5 @@
 # makfile configuration
-COMMON_OBJECTS  = 
+COMMON_OBJECTS  =
 CPU             = msp430g2553
 CFLAGS          = -mmcu=${CPU} -I../h -L/opt/ti/msp430_gcc/include
 
@@ -7,10 +7,10 @@ CFLAGS          = -mmcu=${CPU} -I../h -L/opt/ti/msp430_gcc/include
 CC              = msp430-elf-gcc
 AS              = msp430-elf-as
 
-all: buzzer.elf 
+all: buzzer.elf
 
 #additional rules for files
-buzzer.elf: ${COMMON_OBJECTS} buzzer.o buzzerMain.o ../lib/libTimer.a
+buzzer.elf: ${COMMON_OBJECTS} buzzer.o buzzerMain.o wdInterruptHandler.o p2_interrupt_handler.o switches.o stateMachines.o led.o ../lib/libTimer.a
 	${CC} ${CFLAGS} -o $@ $^
 
 load: buzzer.elf
@@ -20,6 +20,8 @@ clean:
 	rm -f *.o *.elf
 
 buzzer.c: buzzer.h
-buzzerMain.c: buzzer.h
+buzzerMain.c: buzzer.h switches.h led.h
 
-
+wdInterruptHandler.o: stateMachines.h switches.h led.h
+stateMachines.o: stateMachines.h buzzer.h led.h
+switches.o: buzzer.h switches.h switches.c
